@@ -12,14 +12,23 @@ public class CameraController : MonoBehaviour
     float xRotation;
     float yRotation;
 
+    private bool _lookEnabled = true;
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
+    public void SetLookEnabled(bool enabled)
+    {
+        _lookEnabled = enabled;
+    }
+
     private void LateUpdate()
     {
+        if (!_lookEnabled) return;
+
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
 
