@@ -22,6 +22,8 @@ public class ObjectPickup : MonoBehaviour
     private GameObject _heldObject;
     private Rigidbody _heldRb;
 
+    public GameObject HeldObject => _heldObject;
+
     private Vector3 _originalPosition;
     private Quaternion _originalRotation;
     private Vector3 _originalScale;
