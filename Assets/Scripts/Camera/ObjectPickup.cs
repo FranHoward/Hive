@@ -12,11 +12,13 @@ public class ObjectPickup : MonoBehaviour
 
     [Header("Inspect Settings")]
     public float inspectDistance = 1.5f;
-    public float inspectScale = 2f;
     public float rotationSensitivity = 3f;
 
+    [Header("Drop")]
+    public KeyCode dropKey = KeyCode.Q;
+
     [Header("Hold Physics")]
-    [Tooltip("Spring stiffness pulling the held object toward the hand position.")]
+    [Tooltip("Spring stiffness pulling the held object toward its target position.")]
     public float positionStiffness = 400f;
     [Tooltip("Spring damping to keep the held object from oscillating.")]
     public float positionDamping = 35f;
@@ -31,16 +33,16 @@ public class ObjectPickup : MonoBehaviour
 
     public GameObject HeldObject => _heldObject;
 
-    private Vector3 _originalScale;
     private float _originalDrag;
     private float _originalAngularDrag;
     private bool _originalUseGravity;
     private CollisionDetectionMode _originalCollisionMode;
     private RigidbodyConstraints _originalConstraints;
 
-    private bool _isInspecting = false;
-    private bool _isDragging = false;
+    private bool _isInspecting;
+    private bool _isDragging;
     private Vector3 _lastMousePosition;
+    private Quaternion _userRotation = Quaternion.identity;
 
     void Start()
     {
@@ -57,15 +59,50 @@ public class ObjectPickup : MonoBehaviour
             return;
         }
 
+        // Q drops at any time while holding.
+        if (Input.GetKeyDown(dropKey))
+        {
+            DropObject();
+            return;
+        }
+
         if (_isInspecting)
         {
             HandleInspectRotation();
+
+            // RMB exits inspect (back to hold-at-hand).
             if (Input.GetMouseButtonDown(1)) ExitInspectMode();
         }
         else
         {
+            // LMB while already holding enters inspect.
             if (Input.GetMouseButtonDown(0)) EnterInspectMode();
-            if (Input.GetMouseButtonDown(1)) DropObject();
+        }
+    }
+
+    void HandleInspectRotation()
+    {
+        // Hold LMB and drag the mouse to rotate the inspected object.
+        // Cursor is unlocked during the drag so Input.mousePosition deltas update.
+        if (Input.GetMouseButtonDown(0))
+        {
+            _isDragging = true;
+            _lastMousePosition = Input.mousePosition;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            if (cameraController != null) cameraController.SetLookEnabled(false);
+        }
+        if (Input.GetMouseButtonUp(0) && _isDragging)
+        {
+            EndDrag();
+        }
+        if (_isDragging)
+        {
+            Vector3 delta = Input.mousePosition - _lastMousePosition;
+            _lastMousePosition = Input.mousePosition;
+            Quaternion yaw   = Quaternion.AngleAxis(-delta.x * rotationSensitivity, Vector3.up);
+            Quaternion pitch = Quaternion.AngleAxis(delta.y * rotationSensitivity, Vector3.right);
+            _userRotation = yaw * pitch * _userRotation;
         }
     }
 
@@ -85,7 +122,7 @@ public class ObjectPickup : MonoBehaviour
             {
                 _heldObject = hit.collider.gameObject;
                 _heldRb = _heldObject.GetComponent<Rigidbody>();
-                _originalScale = _heldObject.transform.localScale;
+                _userRotation = Quaternion.identity;
 
                 if (_heldRb != null)
                 {
@@ -114,63 +151,35 @@ public class ObjectPickup : MonoBehaviour
 
     void HoldObject()
     {
+        Vector3 targetPos;
         if (_isInspecting)
         {
-            Vector3 inspectPos = _cam.transform.position + _cam.transform.forward * inspectDistance;
-            _heldRb.MovePosition(inspectPos);
-            return;
+            targetPos = _cam.transform.position + _cam.transform.forward * inspectDistance;
         }
-
-        Vector3 targetPos = _cam.transform.position
-            + _cam.transform.forward * holdForward
-            + _cam.transform.right * holdRight
-            - _cam.transform.up * holdDown;
+        else
+        {
+            targetPos = _cam.transform.position
+                + _cam.transform.forward * holdForward
+                + _cam.transform.right * holdRight
+                - _cam.transform.up * holdDown;
+        }
 
         Vector3 toTarget = targetPos - _heldRb.position;
         Vector3 force = toTarget * positionStiffness - _heldRb.linearVelocity * positionDamping;
         _heldRb.AddForce(force, ForceMode.Acceleration);
 
-        _heldRb.MoveRotation(_cam.transform.rotation);
+        _heldRb.MoveRotation(_cam.transform.rotation * _userRotation);
     }
 
     void EnterInspectMode()
     {
         _isInspecting = true;
-        if (_heldRb != null) _heldRb.isKinematic = true;
-        _heldObject.transform.localScale = _originalScale * inspectScale;
-        if (playerController != null) playerController.enabled = false;
-        if (cameraController != null) cameraController.SetLookEnabled(false);
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
     }
 
     void ExitInspectMode()
     {
         _isInspecting = false;
-        if (_heldRb != null) _heldRb.isKinematic = false;
-        _heldObject.transform.localScale = _originalScale;
-        if (playerController != null) playerController.enabled = true;
-        if (cameraController != null) cameraController.SetLookEnabled(true);
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
-
-    void HandleInspectRotation()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            _isDragging = true;
-            _lastMousePosition = Input.mousePosition;
-        }
-        if (Input.GetMouseButtonUp(0)) _isDragging = false;
-
-        if (_isDragging)
-        {
-            Vector3 delta = Input.mousePosition - _lastMousePosition;
-            _lastMousePosition = Input.mousePosition;
-            _heldObject.transform.Rotate(_cam.transform.right, delta.y * rotationSensitivity, Space.World);
-            _heldObject.transform.Rotate(Vector3.up, -delta.x * rotationSensitivity, Space.World);
-        }
+        EndDrag();
     }
 
     void RestorePlayerCollision()
@@ -190,23 +199,32 @@ public class ObjectPickup : MonoBehaviour
         _heldRb.constraints = _originalConstraints;
     }
 
+    void EndDrag()
+    {
+        if (!_isDragging) return;
+        _isDragging = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        if (cameraController != null) cameraController.SetLookEnabled(true);
+    }
+
     public void ForceRelease()
     {
         if (_heldObject == null) return;
-        if (_isInspecting) ExitInspectMode();
+        _isInspecting = false;
+        EndDrag();
         RestorePlayerCollision();
         _heldObject = null;
         _heldRb = null;
-        _isInspecting = false;
     }
 
     void DropObject()
     {
-        if (_isInspecting) ExitInspectMode();
+        _isInspecting = false;
+        EndDrag();
         RestorePlayerCollision();
         RestorePhysicsState();
         _heldObject = null;
         _heldRb = null;
-        _isInspecting = false;
     }
 }
