@@ -10,11 +10,15 @@ public class InteractionSystem : MonoBehaviour
 
     [Header("Settings")]
     public float interactRange = 4f;
-    public KeyCode unlockKey = KeyCode.F;
+    public KeyCode interactKey = KeyCode.F;
 
     Readable lookingAtReadable;
     Lockable lookingAtLockable;
+    Keypad   lookingAtKeypad;
+    BlockSlot lookingAtBlockSlot;
+
     Readable openPage;
+    bool _uiSuspended;
 
     void Start()
     {
@@ -25,10 +29,12 @@ public class InteractionSystem : MonoBehaviour
     {
         if (openPage != null)
         {
-            if (Input.GetKeyDown(unlockKey) || Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1))
+            if (Input.GetKeyDown(interactKey) || Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(1))
                 ClosePage();
             return;
         }
+
+        if (_uiSuspended) return;
 
         UpdateRaycast();
 
@@ -37,23 +43,31 @@ public class InteractionSystem : MonoBehaviour
         if (lookingAtReadable != null && !holdingSomething && Input.GetMouseButtonDown(0))
             OpenPage(lookingAtReadable);
 
-        if (lookingAtLockable != null && lookingAtLockable.isLocked && Input.GetKeyDown(unlockKey))
+        if (lookingAtLockable != null && lookingAtLockable.isLocked && Input.GetKeyDown(interactKey))
         {
             Key held = GetHeldKey();
             if (held != null) lookingAtLockable.TryUnlock(held);
         }
+
+        if (lookingAtKeypad != null && !lookingAtKeypad.IsSolved && Input.GetKeyDown(interactKey))
+            lookingAtKeypad.Activate(this);
     }
 
     void UpdateRaycast()
     {
         lookingAtReadable = null;
         lookingAtLockable = null;
+        lookingAtKeypad = null;
+        lookingAtBlockSlot = null;
         if (cam == null) return;
+
         Ray ray = cam.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
         if (Physics.Raycast(ray, out RaycastHit hit, interactRange))
         {
-            lookingAtReadable = hit.collider.GetComponentInParent<Readable>();
-            lookingAtLockable = hit.collider.GetComponentInParent<Lockable>();
+            lookingAtReadable  = hit.collider.GetComponentInParent<Readable>();
+            lookingAtLockable  = hit.collider.GetComponentInParent<Lockable>();
+            lookingAtKeypad    = hit.collider.GetComponentInParent<Keypad>();
+            lookingAtBlockSlot = hit.collider.GetComponentInParent<BlockSlot>();
         }
     }
 
@@ -63,12 +77,32 @@ public class InteractionSystem : MonoBehaviour
         return pickup.HeldObject.GetComponent<Key>();
     }
 
-    void OpenPage(Readable page)
+    BlockTag GetHeldBlock()
     {
-        openPage = page;
+        if (pickup == null || pickup.HeldObject == null) return null;
+        return pickup.HeldObject.GetComponent<BlockTag>();
+    }
+
+    public void SuspendForUI()
+    {
+        _uiSuspended = true;
         if (playerController != null) playerController.enabled = false;
         if (cameraController != null) cameraController.SetLookEnabled(false);
         if (pickup != null) pickup.enabled = false;
+    }
+
+    public void ResumeFromUI()
+    {
+        _uiSuspended = false;
+        if (playerController != null) playerController.enabled = true;
+        if (cameraController != null) cameraController.SetLookEnabled(true);
+        if (pickup != null) pickup.enabled = true;
+    }
+
+    void OpenPage(Readable page)
+    {
+        openPage = page;
+        SuspendForUI();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -76,9 +110,7 @@ public class InteractionSystem : MonoBehaviour
     void ClosePage()
     {
         openPage = null;
-        if (playerController != null) playerController.enabled = true;
-        if (cameraController != null) cameraController.SetLookEnabled(true);
-        if (pickup != null) pickup.enabled = true;
+        ResumeFromUI();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -86,6 +118,7 @@ public class InteractionSystem : MonoBehaviour
     void OnGUI()
     {
         if (openPage != null) { DrawPageDialog(); return; }
+        if (_uiSuspended) return;
         DrawPrompt();
     }
 
@@ -121,16 +154,27 @@ public class InteractionSystem : MonoBehaviour
     void DrawPrompt()
     {
         string prompt = null;
+        bool holding = pickup != null && pickup.HeldObject != null;
 
         if (lookingAtLockable != null && lookingAtLockable.isLocked)
         {
             Key held = GetHeldKey();
-            if (held != null && held.keyId == lookingAtLockable.requiredKeyId)
-                prompt = "Press F to unlock";
-            else
-                prompt = "Locked.";
+            prompt = (held != null && held.keyId == lookingAtLockable.requiredKeyId)
+                ? "Press F to unlock"
+                : "Locked.";
         }
-        else if (lookingAtReadable != null && (pickup == null || pickup.HeldObject == null))
+        else if (lookingAtKeypad != null && !lookingAtKeypad.IsSolved)
+        {
+            prompt = "Press F to use keypad";
+        }
+        else if (lookingAtBlockSlot != null && !lookingAtBlockSlot.IsFilled)
+        {
+            BlockTag held = GetHeldBlock();
+            prompt = (held != null && held.blockId == lookingAtBlockSlot.requiredBlockId)
+                ? "Bring the block to the slot"
+                : "An empty slot. Something fits here.";
+        }
+        else if (lookingAtReadable != null && !holding)
         {
             prompt = "Left-Click to read";
         }
@@ -142,7 +186,7 @@ public class InteractionSystem : MonoBehaviour
             fontSize = 28, alignment = TextAnchor.MiddleCenter,
             normal = { textColor = Color.white }
         };
-        float w = 520, h = 56;
+        float w = 560, h = 56;
         float x = (Screen.width - w) * 0.5f;
         float y = Screen.height * 0.7f;
         GUI.Box(new Rect(x, y, w, h), "");
