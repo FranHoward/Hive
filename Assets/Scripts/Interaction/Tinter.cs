@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[ExecuteAlways]
 public class Tinter : MonoBehaviour
 {
     public Color color = Color.white;
@@ -7,14 +8,14 @@ public class Tinter : MonoBehaviour
     static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     static readonly int ColorId     = Shader.PropertyToID("_Color");
 
-    void Start()
+    void OnEnable()
     {
         Apply();
     }
 
     void OnValidate()
     {
-        if (Application.isPlaying) Apply();
+        Apply();
     }
 
     void Apply()
