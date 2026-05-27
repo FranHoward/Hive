@@ -3235,7 +3235,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Readable
   title: Research Journal
-  text: "\u201CDay 1: The specimen arrived today. It's unlike anything I've seen.\u201D"
+  text: "\u201CDay 1: The specimen arrived today. It's unlike anything I've seen.\u201D\n....\n\u201CDay
+    12: \"The specimen has escaped containment. I barricaded the door but I can hear
+    it moving outside. Get out before it finds you.\" "
 --- !u!65 &1591154401
 BoxCollider:
   m_ObjectHideFlags: 0
