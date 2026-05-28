@@ -232,6 +232,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &208213486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4000000007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e96e70b26a3b19489263427d3c72144, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickableGlow
+  glowColor: {r: 1, g: 0, b: 0, a: 1}
+  glowIntensity: 2
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -435,7 +449,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   m_Enabled: 1
-  serializedVersion: 13
+  serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 2
@@ -487,7 +501,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -536,6 +550,20 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &562255883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6000000040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e96e70b26a3b19489263427d3c72144, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickableGlow
+  glowColor: {r: 1, g: 0, b: 0, a: 1}
+  glowIntensity: 2
 --- !u!1 &778654680
 GameObject:
   m_ObjectHideFlags: 0
@@ -634,6 +662,7 @@ GameObject:
   - component: {fileID: 954588333}
   - component: {fileID: 954588332}
   - component: {fileID: 954588331}
+  - component: {fileID: 954588336}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Pickupable
@@ -714,7 +743,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 27da32f294d772a4eb9e216d17cf3428, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -761,6 +790,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &954588336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 954588330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e96e70b26a3b19489263427d3c72144, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickableGlow
+  glowColor: {r: 1, g: 0, b: 0, a: 1}
+  glowIntensity: 2
 --- !u!4 &1068244958 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a11ab1ef00000000000000000000fb03, type: 3}
@@ -2220,6 +2263,7 @@ GameObject:
   - component: {fileID: 4000000012}
   - component: {fileID: 4000000013}
   - component: {fileID: 9000000008}
+  - component: {fileID: 208213486}
   m_Layer: 0
   m_Name: Brass_Key
   m_TagString: Pickupable
@@ -2275,7 +2319,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 27da32f294d772a4eb9e216d17cf3428, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3625,6 +3669,7 @@ GameObject:
   - component: {fileID: 6000000045}
   - component: {fileID: 6000000046}
   - component: {fileID: 9000000012}
+  - component: {fileID: 562255883}
   m_Layer: 0
   m_Name: Puzzle_Block
   m_TagString: Pickupable
@@ -3680,7 +3725,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 27da32f294d772a4eb9e216d17cf3428, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7520,7 +7565,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 13000000001}
   m_Enabled: 1
-  serializedVersion: 13
+  serializedVersion: 12
   m_Type: 0
   m_Color: {r: 1, g: 0.85, b: 0.55, a: 1}
   m_Intensity: 8
@@ -7572,7 +7617,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -11584,8 +11629,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000001}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0.0000000, z: 0.0000000, w: 0.7071068}
-  m_LocalPosition: {x: -4, y: 4.0, z: -5}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -4, y: 4, z: -5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11599,13 +11644,13 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000001}
   m_Enabled: 1
-  serializedVersion: 13
+  serializedVersion: 12
   m_Type: 0
-  m_Color: {r: 1.0, g: 0.78, b: 0.45, a: 1}
+  m_Color: {r: 1, g: 0.78, b: 0.45, a: 1}
   m_Intensity: 5
   m_Range: 7
   m_SpotAngle: 50
-  m_InnerSpotAngle: 30.0000
+  m_InnerSpotAngle: 30
   m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
@@ -11651,7 +11696,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -11666,8 +11711,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_CustomShadowLayers: 0
@@ -11711,8 +11756,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000011}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0.0000000, z: 0.0000000, w: 0.7071068}
-  m_LocalPosition: {x: 4, y: 4.0, z: -3}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 4, y: 4, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11726,13 +11771,13 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000011}
   m_Enabled: 1
-  serializedVersion: 13
+  serializedVersion: 12
   m_Type: 0
-  m_Color: {r: 1.0, g: 0.85, b: 0.55, a: 1}
+  m_Color: {r: 1, g: 0.85, b: 0.55, a: 1}
   m_Intensity: 4.5
   m_Range: 6.5
   m_SpotAngle: 48
-  m_InnerSpotAngle: 28.8000
+  m_InnerSpotAngle: 28.8
   m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
@@ -11778,7 +11823,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -11793,8 +11838,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_CustomShadowLayers: 0
@@ -11838,8 +11883,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000021}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0.0000000, z: 0.0000000, w: 0.7071068}
-  m_LocalPosition: {x: 3, y: 4.0, z: 3}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 3, y: 4, z: 3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11853,13 +11898,13 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000021}
   m_Enabled: 1
-  serializedVersion: 13
+  serializedVersion: 12
   m_Type: 0
-  m_Color: {r: 1.0, g: 0.82, b: 0.5, a: 1}
+  m_Color: {r: 1, g: 0.82, b: 0.5, a: 1}
   m_Intensity: 4.5
   m_Range: 6.5
   m_SpotAngle: 48
-  m_InnerSpotAngle: 28.8000
+  m_InnerSpotAngle: 28.8
   m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
@@ -11905,7 +11950,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -11920,8 +11965,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_CustomShadowLayers: 0
@@ -11965,7 +12010,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000031}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0000000, y: 0.9238795, z: -0.3826834, w: 0.0000000}
+  m_LocalRotation: {x: 0, y: 0.9238795, z: -0.3826834, w: 0}
   m_LocalPosition: {x: 0, y: 3.6, z: -6.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -11980,13 +12025,13 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000031}
   m_Enabled: 1
-  serializedVersion: 13
+  serializedVersion: 12
   m_Type: 0
-  m_Color: {r: 0.65, g: 0.78, b: 1.0, a: 1}
+  m_Color: {r: 0.65, g: 0.78, b: 1, a: 1}
   m_Intensity: 4
   m_Range: 6
   m_SpotAngle: 60
-  m_InnerSpotAngle: 36.0000
+  m_InnerSpotAngle: 36
   m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
@@ -12032,7 +12077,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -12047,8 +12092,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_CustomShadowLayers: 0
@@ -12092,8 +12137,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000041}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0000000, y: 0.0000000, z: 0.0000000, w: 1.0000000}
-  m_LocalPosition: {x: 0, y: 3.0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12107,9 +12152,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000041}
   m_Enabled: 1
-  serializedVersion: 13
+  serializedVersion: 12
   m_Type: 2
-  m_Color: {r: 1.0, g: 0.7, b: 0.4, a: 1}
+  m_Color: {r: 1, g: 0.7, b: 0.4, a: 1}
   m_Intensity: 1.6
   m_Range: 11
   m_SpotAngle: 30
@@ -12159,7 +12204,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -12174,8 +12219,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_CustomShadowLayers: 0
@@ -12219,7 +12264,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000051}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0.0000000, z: 0.0000000, w: 0.7071068}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 6.2, y: 3.2, z: -6.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -12234,13 +12279,13 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 14000000051}
   m_Enabled: 1
-  serializedVersion: 13
+  serializedVersion: 12
   m_Type: 0
   m_Color: {r: 0.95, g: 0.15, b: 0.15, a: 1}
   m_Intensity: 2.5
   m_Range: 4.5
   m_SpotAngle: 55
-  m_InnerSpotAngle: 33.0000
+  m_InnerSpotAngle: 33
   m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
@@ -12286,7 +12331,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -12301,8 +12346,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_CustomShadowLayers: 0
