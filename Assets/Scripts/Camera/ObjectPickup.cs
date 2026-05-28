@@ -44,6 +44,8 @@ public class ObjectPickup : MonoBehaviour
     private Vector3 _lastMousePosition;
     private Quaternion _userRotation = Quaternion.identity;
 
+    private PickableGlow _currentGlow;
+
     void Start()
     {
         _cam = GetComponent<UnityEngine.Camera>();
@@ -55,9 +57,12 @@ public class ObjectPickup : MonoBehaviour
     {
         if (_heldObject == null)
         {
+            UpdateHoverGlow();
             TryPickup();
             return;
         }
+
+        ClearHoverGlow();
 
         // Q drops at any time while holding.
         if (Input.GetKeyDown(dropKey))
@@ -226,5 +231,35 @@ public class ObjectPickup : MonoBehaviour
         RestorePhysicsState();
         _heldObject = null;
         _heldRb = null;
+    }
+
+    void UpdateHoverGlow()
+    {
+        Ray ray = _cam.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
+
+        PickableGlow newGlow = null;
+
+        if (Physics.Raycast(ray, out RaycastHit hit, pickupRange))
+        {
+            if (hit.collider.CompareTag("Pickupable"))
+                newGlow = hit.collider.GetComponentInParent<PickableGlow>();
+        }
+
+        if (_currentGlow == newGlow) return;
+
+        ClearHoverGlow();
+
+        _currentGlow = newGlow;
+        if (_currentGlow != null)
+            _currentGlow.SetGlow(true);
+    }
+
+    void ClearHoverGlow()
+    {
+        if (_currentGlow != null)
+        {
+            _currentGlow.SetGlow(false);
+            _currentGlow = null;
+        }
     }
 }
