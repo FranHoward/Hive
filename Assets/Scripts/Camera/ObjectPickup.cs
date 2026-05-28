@@ -44,6 +44,10 @@ public class ObjectPickup : MonoBehaviour
     private Vector3 _lastMousePosition;
     private Quaternion _userRotation = Quaternion.identity;
 
+    private GameObject _highlightedObject;
+    private Color _glowColor = new Color(1f, 0.8f, 0f); // golden
+    public float glowIntensity = 1.5f;
+
     void Start()
     {
         _cam = GetComponent<UnityEngine.Camera>();
@@ -55,6 +59,7 @@ public class ObjectPickup : MonoBehaviour
     {
         if (_heldObject == null)
         {
+            HandleHighlight();
             TryPickup();
             return;
         }
@@ -120,6 +125,9 @@ public class ObjectPickup : MonoBehaviour
         {
             if (hit.collider.CompareTag("Pickupable"))
             {
+                RemoveGlow(hit.collider.gameObject);
+                _highlightedObject = null;
+
                 _heldObject = hit.collider.gameObject;
                 _heldRb = _heldObject.GetComponent<Rigidbody>();
                 _userRotation = Quaternion.identity;
@@ -226,5 +234,60 @@ public class ObjectPickup : MonoBehaviour
         RestorePhysicsState();
         _heldObject = null;
         _heldRb = null;
+    }
+
+    void HandleHighlight()
+    {
+        GameObject lookedAt = null;
+
+        Ray ray = _cam.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
+        if (Physics.Raycast(ray, out RaycastHit hit, pickupRange))
+        {
+            if (hit.collider.CompareTag("Pickupable"))
+                lookedAt = hit.collider.gameObject;
+        }
+
+        // If we're looking at something new, highlight it
+        if (lookedAt != _highlightedObject)
+        {
+            if (_highlightedObject != null) RemoveGlow(_highlightedObject);
+            if (lookedAt != null) ApplyGlow(lookedAt);
+            _highlightedObject = lookedAt;
+        }
+    }
+
+    void ApplyGlow(GameObject obj)
+    {
+        // Point light
+        Light light = obj.GetComponent<Light>();
+        if (light == null) light = obj.AddComponent<Light>();
+        light.type = LightType.Point;
+        light.color = new Color(1f, 0.7f, 0f);
+        light.intensity = 3f;
+        light.range = 3f;
+        light.enabled = true;
+
+        // Emission
+        Renderer rend = obj.GetComponent<Renderer>();
+        if (rend != null)
+        {
+            rend.material.EnableKeyword("_EMISSION");
+            rend.material.SetColor("_EmissionColor", new Color(1f, 0.7f, 0f) * glowIntensity);
+        }
+    }
+
+    void RemoveGlow(GameObject obj)
+    {
+        // Point light
+        Light light = obj.GetComponent<Light>();
+        if (light != null) light.enabled = false;
+
+        // Emission
+        Renderer rend = obj.GetComponent<Renderer>();
+        if (rend != null)
+        {
+            rend.material.SetColor("_EmissionColor", Color.black);
+            rend.material.DisableKeyword("_EMISSION");
+        }
     }
 }
