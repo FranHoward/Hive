@@ -16,6 +16,7 @@ public class InteractionSystem : MonoBehaviour
     Lockable lookingAtLockable;
     Keypad   lookingAtKeypad;
     BlockSlot lookingAtBlockSlot;
+    InteractableGlow lookingAtGlow;
 
     Readable openPage;
     bool _uiSuspended;
@@ -55,6 +56,12 @@ public class InteractionSystem : MonoBehaviour
 
     void UpdateRaycast()
     {
+        if (lookingAtGlow != null)
+        {
+            lookingAtGlow.SetGlow(false);
+            lookingAtGlow = null;
+        }
+
         lookingAtReadable = null;
         lookingAtLockable = null;
         lookingAtKeypad = null;
@@ -62,8 +69,17 @@ public class InteractionSystem : MonoBehaviour
         if (cam == null) return;
 
         Ray ray = cam.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
+
         if (Physics.Raycast(ray, out RaycastHit hit, interactRange))
         {
+            if (hit.collider.CompareTag("Interactable"))
+            {
+                lookingAtGlow = hit.collider.GetComponent<InteractableGlow>();
+
+                if (lookingAtGlow != null)
+                    lookingAtGlow.SetGlow(true);
+            }
+
             lookingAtReadable  = hit.collider.GetComponentInParent<Readable>();
             lookingAtLockable  = hit.collider.GetComponentInParent<Lockable>();
             lookingAtKeypad    = hit.collider.GetComponentInParent<Keypad>();
