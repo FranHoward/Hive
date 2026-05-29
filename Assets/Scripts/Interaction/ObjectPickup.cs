@@ -75,12 +75,10 @@ public class ObjectPickup : MonoBehaviour
         {
             HandleInspectRotation();
 
-            // RMB exits inspect (back to hold-at-hand).
             if (Input.GetMouseButtonDown(1)) ExitInspectMode();
         }
         else
         {
-            // LMB while already holding enters inspect.
             if (Input.GetMouseButtonDown(0)) EnterInspectMode();
         }
     }
