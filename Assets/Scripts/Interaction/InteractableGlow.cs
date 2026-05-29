@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PickableGlow : MonoBehaviour
+public class InteractableGlow : MonoBehaviour
 {
     public Color glowColor = Color.yellow;
     public float glowIntensity = 2f;
