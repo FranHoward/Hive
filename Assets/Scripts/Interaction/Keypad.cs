@@ -72,8 +72,8 @@ public class Keypad : MonoBehaviour
     {
         if (!IsOpen) return;
 
-        float w = 280f;
-        float h = 450f;
+        float w = 460f;
+        float h = 620f;
         float x = (Screen.width - w) * 0.5f;
         float y = (Screen.height - h) * 0.5f;
 
@@ -92,8 +92,8 @@ public class Keypad : MonoBehaviour
         };
         GUI.Box(new Rect(x + 40, y + 80, w - 80, 80), display, dispStyle);
 
-        float btnSize = 50f;
-        float btnGap = 7f;
+        float btnSize = 100f;
+        float btnGap = 14f;
         float gridW = 3 * btnSize + 2 * btnGap;
         float startX = x + (w - gridW) * 0.5f;
         float startY = y + 200f;
