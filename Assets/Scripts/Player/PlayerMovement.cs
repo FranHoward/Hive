@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
+    private float dashMultiplier = 2f;
     public float groundDrag;
 
     [Header("Jumping")]
@@ -17,11 +18,15 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Keybinds")]
     private KeyCode jumpKey = KeyCode.Space;
+    private KeyCode dashKey = KeyCode.LeftShift;
 
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask ground;
     bool grounded;
+
+    [Header("Animation")]
+    private Animator anim;
 
     public Transform orientation;
 
@@ -37,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponentInChildren<Rigidbody>();
         rb.freezeRotation = true;
         readyToJump = true;
+        anim = GetComponentInChildren<Animator>();
     }
 
     private void Update()
@@ -50,7 +56,9 @@ public class PlayerMovement : MonoBehaviour
         else
             rb.linearDamping = 0;
 
-        speedControl();
+        SpeedControl();
+
+        UpdateAnimations();
     }
 
     private void FixedUpdate()
@@ -67,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
         {
             readyToJump = false;
 
-            jump();
+            Jump();
 
             Invoke(nameof(ResetJump), jumpCooldown);
         }
@@ -77,13 +85,22 @@ public class PlayerMovement : MonoBehaviour
     {
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
+        if (Input.GetKeyDown(dashKey))
+        {
+            moveSpeed *= dashMultiplier;
+        }
+
         if (grounded)
+        {
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+        }
         else
+        {
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+        }
     }
 
-    private void speedControl()
+    private void SpeedControl()
     {
         Vector3 flatvelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
 
@@ -94,9 +111,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void jump()
+    private void Jump()
     {
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+        anim.SetTrigger("jump");
 
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
@@ -105,6 +124,19 @@ public class PlayerMovement : MonoBehaviour
     {
         readyToJump = true;
     }
+
+    private void UpdateAnimations()
+    {
+        float speedValue = 0f;
+
+        if (horizontalInput != 0 || verticalInput != 0)
+        {
+            speedValue = Input.GetKey(KeyCode.LeftShift)
+                ? 1f      // Run
+                : 0.5f;   // Walk
+        }
+
+        anim.SetFloat("speed", speedValue);
+        anim.SetBool("grounded", grounded);
+    }
 }
-
-

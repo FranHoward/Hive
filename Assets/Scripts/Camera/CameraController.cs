@@ -12,6 +12,11 @@ public class CameraController : MonoBehaviour
     float xRotation;
     float yRotation;
 
+    public float maxLookAngle = 60f;
+
+    private float yaw;
+    private float pitch;
+
     private bool _lookEnabled = true;
 
     private void Start()
@@ -31,6 +36,16 @@ public class CameraController : MonoBehaviour
 
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
+
+        yaw += mouseX;
+        pitch -= mouseY;
+
+        pitch = Mathf.Clamp(pitch, -80f, 80f);
+
+        // Limit left/right looking
+        yaw = Mathf.Clamp(yaw, -maxLookAngle, maxLookAngle);
+
+        transform.rotation = Quaternion.Euler(pitch, yaw, 0);
 
         yRotation += mouseX;
         xRotation -= mouseY;
