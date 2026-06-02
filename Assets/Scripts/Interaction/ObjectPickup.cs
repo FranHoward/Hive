@@ -14,6 +14,11 @@ public class ObjectPickup : MonoBehaviour
     public float inspectDistance = 1.5f;
     public float rotationSensitivity = 3f;
 
+    [Header("Inspect Zoom")]
+    public float inspectZoomMin = 0.4f;  // closest the object can get
+    public float inspectZoomSpeed = 0.1f;
+    private float _currentInspectDistance;
+
     [Header("Drop")]
     public KeyCode dropKey = KeyCode.Q;
 
@@ -74,6 +79,7 @@ public class ObjectPickup : MonoBehaviour
         if (_isInspecting)
         {
             HandleInspectRotation();
+            HandleInspectZoom();
 
             // RMB exits inspect (back to hold-at-hand).
             if (Input.GetMouseButtonDown(1)) ExitInspectMode();
@@ -109,6 +115,15 @@ public class ObjectPickup : MonoBehaviour
             Quaternion pitch = Quaternion.AngleAxis(delta.y * rotationSensitivity, Vector3.right);
             _userRotation = yaw * pitch * _userRotation;
         }
+    }
+
+    void HandleInspectZoom()
+    {
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll == 0f) return;
+
+        _currentInspectDistance -= scroll * inspectZoomSpeed * 10f;
+        _currentInspectDistance = Mathf.Clamp(_currentInspectDistance, inspectZoomMin, inspectDistance);
     }
 
     void FixedUpdate()
@@ -162,7 +177,7 @@ public class ObjectPickup : MonoBehaviour
         Vector3 targetPos;
         if (_isInspecting)
         {
-            targetPos = _cam.transform.position + _cam.transform.forward * inspectDistance;
+            targetPos = _cam.transform.position + _cam.transform.forward * _currentInspectDistance;
         }
         else
         {
@@ -182,6 +197,7 @@ public class ObjectPickup : MonoBehaviour
     void EnterInspectMode()
     {
         _isInspecting = true;
+        _currentInspectDistance = inspectDistance;
     }
 
     void ExitInspectMode()
