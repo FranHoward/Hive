@@ -26,6 +26,10 @@ public class Tinter : MonoBehaviour
         var props = new MaterialPropertyBlock();
         foreach (var r in renderers)
         {
+            // Don't tint renderers owned by a nested Tinter (e.g. a pupil under a
+            // tinted eye) — let that child Tinter set its own colour instead.
+            if (r.GetComponentInParent<Tinter>() != this) continue;
+
             r.GetPropertyBlock(props);
             props.SetColor(BaseColorId, color);
             props.SetColor(ColorId, color);

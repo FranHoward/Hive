@@ -15,8 +15,11 @@ public class EyeTracker : MonoBehaviour
     [Tooltip("Max distance a pupil may slide across the eye from its rest spot, in the pupil parent's local units.")]
     public float maxOffset = 0.3f;
 
-    [Tooltip("Sensitivity: how strongly off-axis gaze translates into pupil slide. Higher = pupils swing more for the same angle.")]
-    public float lateralGain = 5f;
+    [Tooltip("Horizontal sensitivity multiplier. 1 = pupil points exactly at the target; higher exaggerates left/right gaze.")]
+    public float horizontalGain = 2f;
+
+    [Tooltip("Vertical sensitivity multiplier. 1 = pupil points exactly at the target; raise carefully — too high makes the bug look above/below you.")]
+    public float verticalGain = 1f;
 
     [Tooltip("How quickly the eyes ease toward where they should be looking. Higher = snappier.")]
     public float trackSpeed = 12f;
@@ -69,11 +72,16 @@ public class EyeTracker : MonoBehaviour
                 ? eye.parent.InverseTransformDirection(worldDir.normalized)
                 : worldDir.normalized;
 
-            // Slide the pupil only within the eye's facing plane (x/y). The
-            // forward (z) component is ignored so the pupil stays on the eye
-            // surface; the lateral gaze is amplified and clamped so it visibly
-            // tracks the player even when they're mostly straight ahead.
-            Vector2 lateral = new Vector2(localDir.x, localDir.y) * lateralGain;
+            // Slide the pupil within the eye's facing plane (x/y) so it lands
+            // where the eye is actually looking. localDir.xy is the off-axis
+            // component of the (unit) gaze direction, so scaling it by the
+            // pupil's rest distance from the eye centre (the eyeball radius)
+            // places the pupil on the eye surface pointing at the target. This
+            // is proportional to the real gaze angle, so the pupil points *at*
+            // the player instead of pegging to an extreme. Clamp keeps it from
+            // sliding past the rim for very off-axis targets.
+            float eyeRadius = Mathf.Abs(restLocalPositions[i].z);
+            Vector2 lateral = new Vector2(localDir.x * horizontalGain, localDir.y * verticalGain) * eyeRadius;
             lateral = Vector2.ClampMagnitude(lateral, maxOffset);
 
             Vector3 desired = restLocalPositions[i] + new Vector3(lateral.x, lateral.y, 0f);
