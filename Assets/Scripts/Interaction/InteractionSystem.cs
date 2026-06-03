@@ -14,9 +14,10 @@ public class InteractionSystem : MonoBehaviour
 
     Readable lookingAtReadable;
     Lockable lookingAtLockable;
-    Keypad   lookingAtKeypad;
+    Keypad lookingAtKeypad;
     BlockSlot lookingAtBlockSlot;
     InteractableGlow lookingAtGlow;
+    SecretTrigger lookingAtSecretTrigger;  // 新增
 
     Readable openPage;
     bool _uiSuspended;
@@ -52,6 +53,10 @@ public class InteractionSystem : MonoBehaviour
 
         if (lookingAtKeypad != null && !lookingAtKeypad.IsSolved && Input.GetKeyDown(interactKey))
             lookingAtKeypad.Activate(this);
+
+        // 新增
+        if (lookingAtSecretTrigger != null && Input.GetKeyDown(interactKey))
+            lookingAtSecretTrigger.secretWall.ToggleWall();
     }
 
     void UpdateRaycast()
@@ -66,25 +71,30 @@ public class InteractionSystem : MonoBehaviour
         lookingAtLockable = null;
         lookingAtKeypad = null;
         lookingAtBlockSlot = null;
+        lookingAtSecretTrigger = null;  // 新增
+
         if (cam == null) return;
 
         Ray ray = cam.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
 
         if (Physics.Raycast(ray, out RaycastHit hit, interactRange))
         {
+            Debug.Log("Hit: " + hit.collider.gameObject.name + " Tag: " + hit.collider.tag);
+
             if (hit.collider.CompareTag("Interactable"))
             {
                 lookingAtGlow = hit.collider.GetComponentInParent<InteractableGlow>();
-
                 if (lookingAtGlow != null)
                     lookingAtGlow.SetGlow(true);
             }
 
-            lookingAtReadable  = hit.collider.GetComponentInParent<Readable>();
-            lookingAtLockable  = hit.collider.GetComponentInParent<Lockable>();
-            lookingAtKeypad    = hit.collider.GetComponentInParent<Keypad>();
+            lookingAtReadable = hit.collider.GetComponentInParent<Readable>();
+            lookingAtLockable = hit.collider.GetComponentInParent<Lockable>();
+            lookingAtKeypad = hit.collider.GetComponentInParent<Keypad>();
             lookingAtBlockSlot = hit.collider.GetComponentInParent<BlockSlot>();
+            lookingAtSecretTrigger = hit.collider.GetComponentInParent<SecretTrigger>();  // 新增
         }
+        else { Debug.Log("No hit"); }
     }
 
     Key GetHeldKey()
@@ -182,6 +192,10 @@ public class InteractionSystem : MonoBehaviour
         else if (lookingAtKeypad != null && !lookingAtKeypad.IsSolved)
         {
             prompt = "Press F to use keypad";
+        }
+        else if (lookingAtSecretTrigger != null)  // 新增
+        {
+            prompt = "Press F to interact";
         }
         else if (lookingAtBlockSlot != null && !lookingAtBlockSlot.IsFilled)
         {
