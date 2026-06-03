@@ -3,13 +3,14 @@ using UnityEngine;
 public class WinTrigger : MonoBehaviour
 {
     bool _won;
-    
+
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Triggered by: " + other.name + " tag: " + other.tag);
-        if (other.CompareTag("Player")) _won = true;
+        if (_won) return;
+        if (other.GetComponentInParent<PlayerMovement>() != null)
+            _won = true;
     }
-    
+
     void OnGUI()
     {
         if (!_won) return;
