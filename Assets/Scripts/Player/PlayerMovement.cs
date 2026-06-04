@@ -1,20 +1,17 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
-    private float dashMultiplier = 2f;
+    private float dashMultiplier = 1.5f;
     public float groundDrag;
 
     [Header("Jumping")]
     public float jumpForce;
     public float jumpCooldown;
     public float airMultiplier;
-    bool readyToJump;
+    private bool readyToJump;
 
     [Header("Keybinds")]
     private KeyCode jumpKey = KeyCode.Space;
@@ -23,38 +20,47 @@ public class PlayerMovement : MonoBehaviour
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask ground;
-    bool grounded;
+    private bool grounded;
 
     [Header("Animation")]
     private Animator anim;
 
     public Transform orientation;
 
-    float horizontalInput;
-    float verticalInput;
+    private float horizontalInput;
+    private float verticalInput;
 
-    Vector3 moveDirection;
+    private Vector3 moveDirection;
+    private Rigidbody rb;
 
-    Rigidbody rb;
+    private bool isWalking;
+    private bool isRunning;
 
     private void Start()
     {
         rb = GetComponentInChildren<Rigidbody>();
         rb.freezeRotation = true;
+
         readyToJump = true;
+
         anim = GetComponentInChildren<Animator>();
     }
 
     private void Update()
     {
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, ground);
+        grounded = Physics.Raycast(
+            transform.position,
+            Vector3.down,
+            playerHeight * 0.5f + 0.2f,
+            ground
+        );
 
         MyInput();
 
         if (grounded)
             rb.linearDamping = groundDrag;
         else
-            rb.linearDamping = 0;
+            rb.linearDamping = 0f;
 
         SpeedControl();
 
@@ -66,7 +72,7 @@ public class PlayerMovement : MonoBehaviour
         MovePlayer();
     }
 
-    private void MyInput() 
+    private void MyInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
@@ -74,39 +80,46 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(jumpKey) && readyToJump && grounded)
         {
             readyToJump = false;
-
             Jump();
-
             Invoke(nameof(ResetJump), jumpCooldown);
         }
     }
 
-    private void MovePlayer() 
+    private void MovePlayer()
     {
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        if (Input.GetKeyDown(dashKey))
+        float currentSpeed = moveSpeed;
+
+        if (Input.GetKey(dashKey))
         {
-            moveSpeed *= dashMultiplier;
+            currentSpeed *= dashMultiplier;
         }
 
         if (grounded)
         {
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+            rb.AddForce(moveDirection.normalized * currentSpeed * 10f, ForceMode.Force);
         }
         else
         {
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+            rb.AddForce(moveDirection.normalized * currentSpeed * 10f * airMultiplier, ForceMode.Force);
         }
     }
 
     private void SpeedControl()
     {
-        Vector3 flatvelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        float maxSpeed = moveSpeed;
 
-        if (flatvelocity.magnitude > moveSpeed)
+        if (Input.GetKey(dashKey))
         {
-            Vector3 limitedVelocity = flatvelocity.normalized * moveSpeed;
+            maxSpeed *= dashMultiplier;
+        }
+
+        Vector3 flatVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+        if (flatVelocity.magnitude > maxSpeed)
+        {
+            Vector3 limitedVelocity = flatVelocity.normalized * maxSpeed;
             rb.linearVelocity = new Vector3(limitedVelocity.x, rb.linearVelocity.y, limitedVelocity.z);
         }
     }
@@ -127,16 +140,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void UpdateAnimations()
     {
-        float speedValue = 0f;
+        bool hasMovementInput = horizontalInput != 0 || verticalInput != 0;
 
-        if (horizontalInput != 0 || verticalInput != 0)
-        {
-            speedValue = Input.GetKey(KeyCode.LeftShift)
-                ? 1f      // Run
-                : 0.5f;   // Walk
-        }
+        isRunning = hasMovementInput && Input.GetKey(dashKey);
+        isWalking = hasMovementInput && !Input.GetKey(dashKey);
 
-        anim.SetFloat("speed", speedValue);
+        anim.SetBool("walking", isWalking);
+        anim.SetBool("running", isRunning);
         anim.SetBool("grounded", grounded);
     }
 }
