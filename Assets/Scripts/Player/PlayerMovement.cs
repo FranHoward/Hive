@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask ground;
+    private Collider col;
     private bool grounded;
 
     [Header("Animation")]
@@ -38,22 +39,27 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        rb = GetComponentInChildren<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
         readyToJump = true;
 
         anim = GetComponentInChildren<Animator>();
+        col = GetComponent<Collider>();
     }
 
     private void Update()
     {
+        Debug.Log(playerHeight);
+
         grounded = Physics.Raycast(
-            transform.position,
+            rb.position + Vector3.up * 1f,
             Vector3.down,
-            playerHeight * 0.5f + 0.2f,
+            playerHeight + 0.2f,
             ground
         );
+
+        Debug.Log("Grounded: " + grounded);
 
         MyInput();
 
@@ -77,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
+        Debug.Log(grounded);
         if (Input.GetKey(jumpKey) && readyToJump && grounded)
         {
             readyToJump = false;
