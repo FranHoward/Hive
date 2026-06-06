@@ -79,8 +79,6 @@ public class InteractionSystem : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, interactRange))
         {
-            Debug.Log("Hit: " + hit.collider.gameObject.name + " Tag: " + hit.collider.tag);
-
             if (hit.collider.CompareTag("Interactable"))
             {
                 lookingAtGlow = hit.collider.GetComponentInParent<InteractableGlow>();
@@ -94,7 +92,6 @@ public class InteractionSystem : MonoBehaviour
             lookingAtBlockSlot = hit.collider.GetComponentInParent<BlockSlot>();
             lookingAtSecretTrigger = hit.collider.GetComponentInParent<SecretTrigger>();  // 新增
         }
-        else { Debug.Log("No hit"); }
     }
 
     Key GetHeldKey()
