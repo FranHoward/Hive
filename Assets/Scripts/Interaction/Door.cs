@@ -12,6 +12,11 @@ public class Door : MonoBehaviour
     {
         if (_opened) return;
         _opened = true;
+        // The leaf swings into the corridor, so its collider would otherwise jut
+        // into the walkway as an invisible wall. Once open, the doorway should be
+        // freely passable — drop the collision on the panel(s).
+        foreach (var col in GetComponentsInChildren<Collider>())
+            col.enabled = false;
         StartCoroutine(AnimateOpen());
     }
 

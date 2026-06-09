@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(playerHeight);
+        // Debug.Log(playerHeight);
 
         grounded = Physics.Raycast(
             rb.position + Vector3.up * 1f,
@@ -59,7 +59,7 @@ public class PlayerMovement : MonoBehaviour
             ground
         );
 
-        Debug.Log("Grounded: " + grounded);
+        // Debug.Log("Grounded: " + grounded);
 
         MyInput();
 
@@ -83,7 +83,7 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        Debug.Log(grounded);
+        // Debug.Log(grounded);
         if (Input.GetKey(jumpKey) && readyToJump && grounded)
         {
             readyToJump = false;

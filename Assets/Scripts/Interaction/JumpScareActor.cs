@@ -13,7 +13,7 @@ public class JumpScareActor : MonoBehaviour
     public float startDistance = 1.8f;
 
     [Tooltip("Distance the bug lunges in to (smaller = right in your face).")]
-    public float endDistance = 0.55f;
+    public float endDistance = 0.85f;
 
     [Tooltip("Seconds the lunge from start to end distance takes. Smaller = more sudden.")]
     public float lungeDuration = 0.18f;

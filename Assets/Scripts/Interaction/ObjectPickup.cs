@@ -27,6 +27,8 @@ public class ObjectPickup : MonoBehaviour
     public float positionStiffness = 400f;
     [Tooltip("Spring damping to keep the held object from oscillating.")]
     public float positionDamping = 35f;
+    [Tooltip("Max speed the held object can move at. Caps the spring so thin objects can't be flung through walls.")]
+    public float maxHeldSpeed = 8f;
 
     public MonoBehaviour playerController;
     public CameraController cameraController;
@@ -191,6 +193,11 @@ public class ObjectPickup : MonoBehaviour
         Vector3 force = toTarget * positionStiffness - _heldRb.linearVelocity * positionDamping;
         _heldRb.AddForce(force, ForceMode.Acceleration);
 
+        // Cap the speed so the spring can't fling a thin object through a wall
+        // faster than continuous collision detection can catch it.
+        if (_heldRb.linearVelocity.magnitude > maxHeldSpeed)
+            _heldRb.linearVelocity = _heldRb.linearVelocity.normalized * maxHeldSpeed;
+
         _heldRb.MoveRotation(_cam.transform.rotation * _userRotation);
     }
 
@@ -219,7 +226,9 @@ public class ObjectPickup : MonoBehaviour
         _heldRb.linearDamping = _originalDrag;
         _heldRb.angularDamping = _originalAngularDrag;
         _heldRb.useGravity = _originalUseGravity;
-        _heldRb.collisionDetectionMode = _originalCollisionMode;
+        // Keep continuous detection after dropping so a thin/fast-falling object
+        // doesn't tunnel through the floor instead of reverting to Discrete.
+        _heldRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         _heldRb.constraints = _originalConstraints;
     }
 
