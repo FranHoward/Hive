@@ -54,7 +54,7 @@ namespace HorrorDecorTools
             var scene = SceneManager.GetActiveScene();
             if (!scene.isLoaded)
             {
-                Debug.LogError("[TreasureSwap] No scene loaded.");
+                // Debug.LogError("[TreasureSwap] No scene loaded.");
                 return;
             }
 
@@ -62,18 +62,18 @@ namespace HorrorDecorTools
 
             var keyFbx   = AssetDatabase.LoadAssetAtPath<GameObject>(KeyModelPath);
             var chestFbx = AssetDatabase.LoadAssetAtPath<GameObject>(ChestModelPath);
-            if (keyFbx == null)   Debug.LogError($"[TreasureSwap] Missing model: {KeyModelPath}");
-            if (chestFbx == null) Debug.LogError($"[TreasureSwap] Missing model: {ChestModelPath}");
+            // if (keyFbx == null)   Debug.LogError($"[TreasureSwap] Missing model: {KeyModelPath}");
+            // if (chestFbx == null) Debug.LogError($"[TreasureSwap] Missing model: {ChestModelPath}");
             if (keyFbx == null || chestFbx == null) return;
 
             int changed = 0;
             var key   = FindInScene(KeyObjectName);
             var chest = FindInScene(ChestObjectName);
 
-            if (key == null)   Debug.LogWarning($"[TreasureSwap] '{KeyObjectName}' not found in scene.");
+            if (key == null)   { } // Debug.LogWarning($"[TreasureSwap] '{KeyObjectName}' not found in scene.");
             else if (SwapKey(key, keyFbx)) changed++;
 
-            if (chest == null) Debug.LogWarning($"[TreasureSwap] '{ChestObjectName}' not found in scene.");
+            if (chest == null) { } // Debug.LogWarning($"[TreasureSwap] '{ChestObjectName}' not found in scene.");
             else if (SwapChest(chest, chestFbx)) changed++;
 
             if (changed > 0)
@@ -81,7 +81,7 @@ namespace HorrorDecorTools
                 EditorSceneManager.MarkSceneDirty(scene);
                 EditorSceneManager.SaveOpenScenes();
             }
-            Debug.Log($"[TreasureSwap] Done. Swapped {changed} object(s).");
+            // Debug.Log($"[TreasureSwap] Done. Swapped {changed} object(s).");
         }
 
         // Moves ONLY the lid hinge pivot onto the lid's back-bottom edge, leaving
@@ -92,18 +92,18 @@ namespace HorrorDecorTools
         public static void FixLidPivot()
         {
             var chest = FindInScene(ChestObjectName);
-            if (chest == null) { Debug.LogError($"[TreasureSwap] '{ChestObjectName}' not found."); return; }
+            if (chest == null) { /* Debug.LogError($"[TreasureSwap] '{ChestObjectName}' not found."); */ return; }
 
             var hinge = chest.transform.Find("Chest_LidHinge");
-            if (hinge == null) { Debug.LogError("[TreasureSwap] 'Chest_LidHinge' not found under the chest."); return; }
+            if (hinge == null) { /* Debug.LogError("[TreasureSwap] 'Chest_LidHinge' not found under the chest."); */ return; }
 
             var lid = FindDeep(hinge, "ChestLid") ?? (hinge.childCount > 0 ? hinge.GetChild(0) : null);
-            if (lid == null) { Debug.LogError("[TreasureSwap] No lid found under the hinge."); return; }
+            if (lid == null) { /* Debug.LogError("[TreasureSwap] No lid found under the hinge."); */ return; }
 
             // Lid's current world bounds (its manually placed position is respected).
             if (!TryGetWorldBounds(lid.gameObject, out var lb))
             {
-                Debug.LogError("[TreasureSwap] Lid has no renderer to measure.");
+                // Debug.LogError("[TreasureSwap] Lid has no renderer to measure.");
                 return;
             }
 
@@ -123,7 +123,7 @@ namespace HorrorDecorTools
 
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
             EditorSceneManager.SaveOpenScenes();
-            Debug.Log("[TreasureSwap] Lid pivot moved to the lid's back-bottom edge; lid position unchanged.");
+            // Debug.Log("[TreasureSwap] Lid pivot moved to the lid's back-bottom edge; lid position unchanged.");
         }
 
         // ---- Key ------------------------------------------------------------
@@ -168,7 +168,7 @@ namespace HorrorDecorTools
         static void ApplyKeyMaterial(GameObject model)
         {
             var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(KeyTexPath);
-            if (tex == null) { Debug.LogWarning($"[TreasureSwap] Missing key texture: {KeyTexPath}"); return; }
+            if (tex == null) { /* Debug.LogWarning($"[TreasureSwap] Missing key texture: {KeyTexPath}"); */ return; }
 
             var mat = AssetDatabase.LoadAssetAtPath<Material>(KeyMatPath);
             if (mat == null)
@@ -245,7 +245,7 @@ namespace HorrorDecorTools
             }
             else
             {
-                Debug.LogWarning("[TreasureSwap] 'ChestLid' node not found in chest FBX; lid animation not wired.");
+                // Debug.LogWarning("[TreasureSwap] 'ChestLid' node not found in chest FBX; lid animation not wired.");
             }
 
             // Interaction raycast needs a collider that resolves to Lockable via

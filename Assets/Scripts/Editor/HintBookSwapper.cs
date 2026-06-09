@@ -43,17 +43,17 @@ namespace HorrorDecorTools
         public static void Run()
         {
             var scene = SceneManager.GetActiveScene();
-            if (!scene.isLoaded) { Debug.LogError("[HintBook] No scene loaded."); return; }
+            if (!scene.isLoaded) { /* Debug.LogError("[HintBook] No scene loaded."); */ return; }
 
             AssetDatabase.Refresh();
 
             var bookFbx = AssetDatabase.LoadAssetAtPath<GameObject>(BookModelPath);
-            if (bookFbx == null) { Debug.LogError($"[HintBook] Missing model: {BookModelPath}"); return; }
+            if (bookFbx == null) { /* Debug.LogError($"[HintBook] Missing model: {BookModelPath}"); */ return; }
 
             int changed = 0;
 
             var note = FindInScene(NoteObjectName);
-            if (note == null) Debug.LogWarning($"[HintBook] '{NoteObjectName}' not found in scene.");
+            if (note == null) { } // Debug.LogWarning($"[HintBook] '{NoteObjectName}' not found in scene.");
             else if (SwapNoteToBook(note, bookFbx)) changed++;
 
             if (changed > 0)
@@ -61,7 +61,7 @@ namespace HorrorDecorTools
                 EditorSceneManager.MarkSceneDirty(scene);
                 EditorSceneManager.SaveOpenScenes();
             }
-            Debug.Log($"[HintBook] Done. Applied {changed} change(s).");
+            // Debug.Log($"[HintBook] Done. Applied {changed} change(s).");
         }
 
         // ---- Note -> Book ---------------------------------------------------

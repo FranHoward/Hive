@@ -124,7 +124,7 @@ namespace HorrorDecorTools
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
                 if (prefab == null)
                 {
-                    Debug.LogWarning($"[HorrorDecor] Missing model: {path}");
+                    // Debug.LogWarning($"[HorrorDecor] Missing model: {path}");
                     missing++;
                     continue;
                 }
@@ -171,7 +171,7 @@ namespace HorrorDecorTools
 
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
             EditorSceneManager.SaveOpenScenes();
-            Debug.Log($"[HorrorDecor] Placed {placed} props ({missing} missing) under '{RootName}'.");
+            // Debug.Log($"[HorrorDecor] Placed {placed} props ({missing} missing) under '{RootName}'.");
         }
 
         static bool TryGetWorldBounds(GameObject go, out Bounds bounds)

@@ -121,7 +121,7 @@ namespace HorrorDecorTools
                 l.shadowStrength = Mathf.Max(l.shadowStrength, 0.75f);
                 n++;
             }
-            Debug.Log($"[Hive] Set {n} existing lights to a high contrast baseline.");
+            // Debug.Log($"[Hive] Set {n} existing lights to a high contrast baseline.");
         }
 
         [MenuItem("Tools/Horror Decor/Hive/Clear Hive Atmosphere")]
@@ -846,7 +846,7 @@ namespace HorrorDecorTools
             var scene = SceneManager.GetActiveScene();
             if (scene.name != TargetScene)
             {
-                Debug.LogWarning($"[Hive] Active scene is '{scene.name}', expected '{TargetScene}'. Aborting to avoid editing the wrong scene.");
+                // Debug.LogWarning($"[Hive] Active scene is '{scene.name}', expected '{TargetScene}'. Aborting to avoid editing the wrong scene.");
                 return false;
             }
             return true;
@@ -857,7 +857,7 @@ namespace HorrorDecorTools
             AssetDatabase.SaveAssets();
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
             EditorSceneManager.SaveOpenScenes();
-            Debug.Log($"[Hive] {what}.");
+            // Debug.Log($"[Hive] {what}.");
         }
     }
 }
