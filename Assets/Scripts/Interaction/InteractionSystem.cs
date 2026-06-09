@@ -17,9 +17,11 @@ public class InteractionSystem : MonoBehaviour
     Keypad lookingAtKeypad;
     BlockSlot lookingAtBlockSlot;
     InteractableGlow lookingAtGlow;
-    SecretTrigger lookingAtSecretTrigger;  // 新增
+    SecretTrigger lookingAtSecretTrigger;
 
     Readable openPage;
+    int _currentPage = 0;
+    string[] _cachedPages;
     bool _uiSuspended;
 
     void Start()
@@ -54,7 +56,7 @@ public class InteractionSystem : MonoBehaviour
         if (lookingAtKeypad != null && !lookingAtKeypad.IsSolved && Input.GetKeyDown(interactKey))
             lookingAtKeypad.Activate(this);
 
-        // 新增
+        
         if (lookingAtSecretTrigger != null && Input.GetKeyDown(interactKey))
             lookingAtSecretTrigger.secretWall.ToggleWall();
     }
@@ -71,7 +73,7 @@ public class InteractionSystem : MonoBehaviour
         lookingAtLockable = null;
         lookingAtKeypad = null;
         lookingAtBlockSlot = null;
-        lookingAtSecretTrigger = null;  // 新增
+        lookingAtSecretTrigger = null;
 
         if (cam == null) return;
 
@@ -90,7 +92,7 @@ public class InteractionSystem : MonoBehaviour
             lookingAtLockable = hit.collider.GetComponentInParent<Lockable>();
             lookingAtKeypad = hit.collider.GetComponentInParent<Keypad>();
             lookingAtBlockSlot = hit.collider.GetComponentInParent<BlockSlot>();
-            lookingAtSecretTrigger = hit.collider.GetComponentInParent<SecretTrigger>();  // 新增
+            lookingAtSecretTrigger = hit.collider.GetComponentInParent<SecretTrigger>();
         }
     }
 
@@ -125,6 +127,8 @@ public class InteractionSystem : MonoBehaviour
     void OpenPage(Readable page)
     {
         openPage = page;
+        _currentPage = 0;
+        _cachedPages = page.GetPages();
         SuspendForUI();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -160,18 +164,49 @@ public class InteractionSystem : MonoBehaviour
         };
         GUI.Label(new Rect(x, y + 24, w, 56), openPage.title, titleStyle);
 
+        if (_cachedPages != null && _cachedPages.Length > 1)
+        {
+            var pageNumStyle = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 18, alignment = TextAnchor.UpperCenter,
+                normal = { textColor = new Color(0.6f, 0.6f, 0.6f) }
+            };
+            GUI.Label(new Rect(x, y + 70, w, 30),
+                $"Page {_currentPage + 1} / {_cachedPages.Length}", pageNumStyle);
+        }
+
+        string content = (_cachedPages != null && _cachedPages.Length > 0)
+            ? _cachedPages[_currentPage]
+            : openPage.fullText;
+
         var bodyStyle = new GUIStyle(GUI.skin.label)
         {
-            fontSize = 26, wordWrap = true, alignment = TextAnchor.UpperLeft
+            fontSize = 23, wordWrap = true, alignment = TextAnchor.UpperLeft
         };
-        GUI.Label(new Rect(x + 40, y + 110, w - 80, h - 170), openPage.text, bodyStyle);
+        GUI.Label(new Rect(x + 40, y + 110, w - 80, h - 150), content, bodyStyle);
+
+        var btnStyle = new GUIStyle(GUI.skin.button) { fontSize = 22 };
+        float btnW = 120f, btnH = 44f;
+
+        if (_currentPage > 0)
+        {
+            if (GUI.Button(new Rect(x + 20, y + h - 64, btnW, btnH), "◀ Prev", btnStyle))
+                _currentPage--;
+        }
+
+        if (_cachedPages != null && _currentPage < _cachedPages.Length - 1)
+        {
+            if (GUI.Button(new Rect(x + w - btnW - 20, y + h - 64, btnW, btnH), "Next ▶", btnStyle))
+                _currentPage++;
+        }
 
         var hintStyle = new GUIStyle(GUI.skin.label)
         {
             fontSize = 18, alignment = TextAnchor.LowerCenter,
             normal = { textColor = new Color(0.8f, 0.8f, 0.8f) }
         };
-        GUI.Label(new Rect(x, y + h - 40, w, 28), "Press F, Esc, or Right-Click to close", hintStyle);
+        GUI.Label(new Rect(x, y + h - 32, w, 24),
+            "Press F, Esc, or Right-Click to close", hintStyle);
     }
 
     void DrawPrompt()
@@ -190,7 +225,7 @@ public class InteractionSystem : MonoBehaviour
         {
             prompt = "Press F to use keypad";
         }
-        else if (lookingAtSecretTrigger != null)  // 新增
+        else if (lookingAtSecretTrigger != null)
         {
             prompt = "Press F to interact";
         }
