@@ -20,13 +20,13 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.06, g: 0.06, b: 0.08, a: 1}
+  m_AmbientSkyColor: {r: 0, g: 0, b: 0, a: 1}
   m_AmbientEquatorColor: {r: 0.04, g: 0.04, b: 0.05, a: 1}
   m_AmbientGroundColor: {r: 0.02, g: 0.02, b: 0.02, a: 1}
   m_AmbientIntensity: 0.25
-  m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_AmbientMode: 3
+  m_SubtractiveShadowColor: {r: 0, g: 0, b: 0, a: 1}
+  m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1430,132 +1430,130 @@ MonoBehaviour:
   title: Page
   fullText: '[No title. Pages are water-damaged and partially burned.]
 
-    
+
 
     ---
 
-    
+
 
     ...found
     it again.
 
-    
+
 
     The thing in the wall isn''t the specimen.
 
-    
 
-    The
-    specimen was Patient 0.
+
+    The specimen
+    was Patient 0.
 
     There were others.
 
-    
 
-    Twelve of us came
-    in on the first rotation.
+
+    Twelve of us came in on the first
+    rotation.
 
     I counted the beds this morning.
 
-    
 
-    There
-    are fourteen.
 
-    
+    There are fourteen.
+
+
 
     ---
 
-    
 
-    They don''t sleep.
 
-    I''ve started
-    leaving the light on.
+    They
+    don''t sleep.
 
-    
+    I''ve started leaving the light on.
+
+
 
     It doesn''t help.
 
-    They don''t need darkness.
-
-    
-
     They
-    just need you to be alone.
+    don''t need darkness.
 
-    
+
+
+    They just need you to be alone.
+
+
 
     ---
 
-    
 
-    Note to self:
 
-    Stop
-    writing in this.
+    Note
+    to self:
+
+    Stop writing in this.
 
     If they find it they''ll know you know.
 
-    
+
 
     If
     you''re reading this it means they found me first.
 
-    
 
-    It means you''re
-    already alone.
 
-    
+    It means you''re already
+    alone.
+
+
 
     ---
 
-    
 
-    [Last page. Written in something
-    that isn''t ink.]
 
-    
+    [Last page. Written in something that isn''t ink.]
 
-    You felt it when you walked in here.
 
-    
+
+    You
+    felt it when you walked in here.
+
+
+
+    That feeling that something was watching.
+
+
 
     That
-    feeling that something was watching.
+    wasn''t paranoia.
 
-    
 
-    That wasn''t paranoia.
 
-    
+    It''s still in the room with you.
 
-    It''s
-    still in the room with you.
 
-    
 
-    It has been since you opened the door.
+    It has been
+    since you opened the door.
 
-    
 
-    Don''t
-    turn around.
 
-    
+    Don''t turn around.
+
+
 
     Whatever you do.
 
-    
+
 
     Don''t.
 
-    
+
 
     Turn.
 
-    
+
 
     Around.'
   charsPerPage: 600
@@ -2450,8 +2448,8 @@ Camera:
   m_GameObject: {fileID: 330585543}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -5396,6 +5394,7 @@ GameObject:
   - component: {fileID: 939661520}
   - component: {fileID: 939661519}
   - component: {fileID: 939661518}
+  - component: {fileID: 939661521}
   m_Layer: 0
   m_Name: Trigger
   m_TagString: Interactable
@@ -5464,7 +5463,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: c0c20e03614e5f244bfe613c2b05fc53, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5496,6 +5495,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 939661516}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &939661521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 939661516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e96e70b26a3b19489263427d3c72144, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableGlow
+  glowColor: {r: 1, g: 0, b: 0, a: 1}
+  glowIntensity: 0.5
 --- !u!1001 &945377975
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10542,7 +10555,7 @@ MonoBehaviour:
   playerHeight: 2
   ground:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   orientation: {fileID: 778654681}
 --- !u!4 &1747827836 stripped
 Transform:
