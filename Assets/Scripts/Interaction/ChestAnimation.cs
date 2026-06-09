@@ -4,7 +4,7 @@ using UnityEngine;
 public class ChestAnimation : MonoBehaviour
 {
     public Transform lidHinge;
-    public float openAngle = -95f;
+    public float openAngle = -90f;
     public float duration = 0.7f;
 
     bool _opened;

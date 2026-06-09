@@ -107,7 +107,7 @@ namespace HorrorDecorTools
                 if (root != null && l.transform.IsChildOf(root.transform)) continue; // skip generated hive lights
                 if (l.type == LightType.Directional)
                 {
-                    l.intensity = 0.035f;
+                    l.intensity = 0.22f;
                     l.color = new Color(0.55f, 0.68f, 0.62f);
                     l.shadows = LightShadows.Soft;
                     l.shadowStrength = 0.85f;
@@ -141,6 +141,9 @@ namespace HorrorDecorTools
             if (!AssetDatabase.IsValidFolder(MatDir))
                 AssetDatabase.CreateFolder("Assets/Materials", "Hive");
 
+            // Flesh stays matte/dark; resin carries only a faint green emissive accent
+            // (a small glowing part within each cluster, not the whole mass). Visibility
+            // comes from the green growth lights added in BuildLights, not the material.
             _flesh   = Lit("HiveFlesh",  new Color(0.10f, 0.06f, 0.07f), 0.25f, 0f, null);
             _resin   = Lit("HiveResin",  new Color(0.06f, 0.05f, 0.04f), 0.85f, 0.1f, new Color(0.05f, 0.08f, 0.03f) * 0.4f);
             _egg     = Lit("HiveEggSac", new Color(0.18f, 0.22f, 0.10f), 0.75f, 0f, new Color(0.20f, 0.35f, 0.08f) * 0.6f);
@@ -370,6 +373,40 @@ namespace HorrorDecorTools
                 AddPointLight(group, "Nest_Sickly_Glow", new Vector3(Room1NestFocus.x, 1.5f, Room1NestFocus.z),
                               new Color(0.35f, 0.9f, 0.18f), intensity: 2.3f, range: 3.2f,
                               shadows: false, flickerDepth: 0.28f, speed: 2f, blackout: 0.04f);
+
+                // Soft accent glows so the key interactables and the dark corners read
+                // clearly. These are gentle, no-blackout fill pools layered on top of the
+                // dramatic spots — they lift the gloom without flattening the atmosphere.
+                AddPointLight(group, "Keypad_Glow", new Vector3(3f, 1.5f, r.minZ + 0.85f),
+                              new Color(0.95f, 0.78f, 0.42f), intensity: 2.0f, range: 3.6f,
+                              shadows: false, flickerDepth: 0.08f, speed: 2f, blackout: 0f);
+                AddPointLight(group, "Key_Glow", new Vector3(3f, 0.6f, 3f),
+                              new Color(0.85f, 0.92f, 0.5f), intensity: 1.8f, range: 3.0f,
+                              shadows: false, flickerDepth: 0.1f, speed: 2.4f, blackout: 0f);
+
+                // Four corner fill pools so the room edges aren't pitch black.
+                var cornerGlow = new Color(0.32f, 0.6f, 0.28f);
+                AddPointLight(group, "Corner_Glow_NW", new Vector3(r.minX + 1.4f, 0.7f, r.maxZ - 1.4f),
+                              cornerGlow, intensity: 1.1f, range: 3.8f, shadows: false, flickerDepth: 0.06f, speed: 1.6f, blackout: 0f);
+                AddPointLight(group, "Corner_Glow_NE", new Vector3(r.maxX - 1.4f, 0.7f, r.maxZ - 1.4f),
+                              cornerGlow, intensity: 1.1f, range: 3.8f, shadows: false, flickerDepth: 0.06f, speed: 1.7f, blackout: 0f);
+                AddPointLight(group, "Corner_Glow_SW", new Vector3(r.minX + 1.4f, 0.7f, r.minZ + 1.4f),
+                              cornerGlow, intensity: 1.1f, range: 3.8f, shadows: false, flickerDepth: 0.06f, speed: 1.5f, blackout: 0f);
+                AddPointLight(group, "Corner_Glow_SE", new Vector3(r.maxX - 1.4f, 0.7f, r.minZ + 1.4f),
+                              cornerGlow, intensity: 1.1f, range: 3.8f, shadows: false, flickerDepth: 0.06f, speed: 1.8f, blackout: 0f);
+
+                // Green growth lights: graze the wall/ceiling clusters so the organic
+                // masses are visible without making the masses themselves emissive. The
+                // floor mounds are already lit by the corner glows above.
+                var growthGlow = new Color(0.32f, 0.7f, 0.24f);
+                AddPointLight(group, "Growth_Glow_WestWall", new Vector3(r.minX + 1f, 2.2f, midZ - 0.5f),
+                              growthGlow, intensity: 1.6f, range: 6.5f, shadows: false, flickerDepth: 0.12f, speed: 2.2f, blackout: 0f);
+                AddPointLight(group, "Growth_Glow_EastWall", new Vector3(r.maxX - 1f, 2.1f, midZ + 0.5f),
+                              growthGlow, intensity: 1.6f, range: 6.5f, shadows: false, flickerDepth: 0.12f, speed: 2.4f, blackout: 0f);
+                AddPointLight(group, "Growth_Glow_NorthWall", new Vector3(r.minX + 4f, 2.3f, r.maxZ - 1f),
+                              growthGlow, intensity: 1.4f, range: 4.5f, shadows: false, flickerDepth: 0.12f, speed: 2.6f, blackout: 0f);
+                AddPointLight(group, "Growth_Glow_Ceiling", new Vector3(midX, r.ceilY - 0.6f, midZ),
+                              growthGlow, intensity: 1.5f, range: 7f, shadows: false, flickerDepth: 0.1f, speed: 2f, blackout: 0f);
             }
         }
 
@@ -642,10 +679,10 @@ namespace HorrorDecorTools
         {
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
-            RenderSettings.fogColor = new Color(0.025f, 0.033f, 0.026f);
-            RenderSettings.fogDensity = 0.045f;
+            RenderSettings.fogColor = new Color(0.04f, 0.05f, 0.042f);
+            RenderSettings.fogDensity = 0.022f;
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-            RenderSettings.ambientLight = new Color(0.010f, 0.014f, 0.011f);
+            RenderSettings.ambientLight = new Color(0.05f, 0.06f, 0.052f);
         }
 
         // ----------------------------------------------------------- post process
