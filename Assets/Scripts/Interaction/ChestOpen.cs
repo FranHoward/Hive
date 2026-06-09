@@ -2,12 +2,13 @@ using UnityEngine;
 
 public class ChestOpen : MonoBehaviour
 {
-    public GameObject key;  // 拖入 Room2_Key
+    public GameObject key;
     private Animation _anim;
 
     void Start()
     {
         _anim = GetComponent<Animation>();
+        if (key != null) key.SetActive(false);
     }
 
     public void Open()
@@ -22,7 +23,7 @@ public class ChestOpen : MonoBehaviour
             if (rb != null)
             {
                 rb.isKinematic = false;
-                rb.useGravity = false;
+                rb.useGravity = true;
             }
         }
     }
