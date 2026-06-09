@@ -8,9 +8,15 @@ public class CameraController : MonoBehaviour
     public float sensY;
 
     public Transform orientation;
+    public Transform playerObject;
 
     float xRotation;
     float yRotation;
+
+    public float maxLookAngle = 60f;
+
+    private float yaw;
+    private float pitch;
 
     private bool _lookEnabled = true;
 
@@ -34,9 +40,13 @@ public class CameraController : MonoBehaviour
 
         yRotation += mouseX;
         xRotation -= mouseY;
-
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+
         orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+
+        // Rotate visible player model with camera direction
+        playerObject.rotation = Quaternion.Euler(0, yRotation, 0);
     }
 }
