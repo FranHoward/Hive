@@ -64,7 +64,7 @@ public class JumpScareActor : MonoBehaviour
     public float graspAmount = 0.12f;
 
     [Header("Audio")]
-    [Tooltip("Optional scream/roar to play when the scare fires.")]
+    [Tooltip("Scream/roar to play when the scare fires. Falls back to Resources/Audio/jumpFinal if left empty.")]
     public AudioClip screamClip;
 
     [Range(0f, 1f)]
@@ -84,6 +84,12 @@ public class JumpScareActor : MonoBehaviour
             return;
         }
 
+        if (screamClip == null)
+            screamClip = Resources.Load<AudioClip>("Audio/jumpFinal");
+
+        // PlayClipAtPoint spawns a temporary AudioSource that outlives this
+        // GameObject getting disabled, so the scream always plays in full even
+        // though the scare itself only lasts ~lungeDuration + holdDuration.
         if (screamClip != null)
             AudioSource.PlayClipAtPoint(screamClip, mainCam.transform.position, screamVolume);
 

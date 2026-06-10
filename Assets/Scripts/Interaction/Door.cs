@@ -9,13 +9,26 @@ public class Door : MonoBehaviour
 
     public Vector3 rotationAxis = Vector3.up;
 
+    [Header("Audio")]
+    [Range(0f, 1f)]
+    public float openVolume = 1f;
+    private AudioClip _openClip;
+
     private bool _opened;
+
+    void Awake()
+    {
+        _openClip = Resources.Load<AudioClip>("Audio/doorOpenFinal");
+    }
 
     public void Open()
     {
         if (_opened) return;
 
         _opened = true;
+
+        if (_openClip != null)
+            AudioSource.PlayClipAtPoint(_openClip, transform.position, openVolume);
         // The leaf swings into the corridor, so its collider would otherwise jut
         // into the walkway as an invisible wall. Once open, the doorway should be
         // freely passable — drop the collision on the panel(s).

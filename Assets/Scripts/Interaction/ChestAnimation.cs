@@ -7,12 +7,26 @@ public class ChestAnimation : MonoBehaviour
     public float openAngle = -90f;
     public float duration = 0.7f;
 
+    [Header("Audio")]
+    [Range(0f, 1f)]
+    public float openVolume = 1f;
+    AudioClip _openClip;
+
     bool _opened;
+
+    void Awake()
+    {
+        _openClip = Resources.Load<AudioClip>("Audio/chestOpen");
+    }
 
     public void Open()
     {
         if (_opened || lidHinge == null) return;
         _opened = true;
+
+        if (_openClip != null)
+            AudioSource.PlayClipAtPoint(_openClip, transform.position, openVolume);
+
         StartCoroutine(AnimateOpen());
     }
 

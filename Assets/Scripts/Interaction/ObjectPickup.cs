@@ -55,11 +55,18 @@ public class ObjectPickup : MonoBehaviour
     private Color _glowColor = new Color(1f, 0.8f, 0f); // golden
     public float glowIntensity = 1.5f;
 
+    [Header("Audio")]
+    [Range(0f, 1f)]
+    public float pickupVolume = 1f;
+    private AudioClip _pickupClip;
+
     void Start()
     {
         _cam = GetComponent<UnityEngine.Camera>();
         if (playerController != null)
             _playerCollider = playerController.GetComponentInChildren<Collider>();
+
+        _pickupClip = Resources.Load<AudioClip>("Audio/pickupFinal");
     }
 
     void Update()
@@ -144,6 +151,9 @@ public class ObjectPickup : MonoBehaviour
             {
                 RemoveGlow(hit.collider.gameObject);
                 _highlightedObject = null;
+
+                if (_pickupClip != null)
+                    AudioSource.PlayClipAtPoint(_pickupClip, hit.point, pickupVolume);
 
                 _heldObject = hit.collider.gameObject;
                 _heldRb = _heldObject.GetComponent<Rigidbody>();

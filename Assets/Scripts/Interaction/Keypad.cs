@@ -6,6 +6,9 @@ public class Keypad : MonoBehaviour
     public string requiredCode = "1987";
     public UnityEvent onCorrect;
 
+    [Range(0f, 1f)]
+    public float clickVolume = 0.45f;
+
     public bool IsOpen { get; private set; }
     public bool IsSolved { get; private set; }
 
@@ -13,6 +16,22 @@ public class Keypad : MonoBehaviour
     string _flash = "";
     float _flashUntil;
     InteractionSystem _owner;
+
+    AudioClip _clickClip;
+    AudioSource _clickSource;
+
+    void Awake()
+    {
+        _clickClip = Resources.Load<AudioClip>("Audio/keyPadFinal");
+        _clickSource = gameObject.AddComponent<AudioSource>();
+        _clickSource.playOnAwake = false;
+        _clickSource.spatialBlend = 0f; // 2D UI click
+    }
+
+    void PlayClick()
+    {
+        if (_clickClip != null) _clickSource.PlayOneShot(_clickClip, clickVolume);
+    }
 
     public void Activate(InteractionSystem system)
     {
@@ -45,10 +64,10 @@ public class Keypad : MonoBehaviour
         {
             if (c == '\b')
             {
-                if (_entry.Length > 0) _entry = _entry.Substring(0, _entry.Length - 1);
+                if (_entry.Length > 0) { _entry = _entry.Substring(0, _entry.Length - 1); PlayClick(); }
             }
-            else if (c == '\n' || c == '\r') Submit();
-            else if (c >= '0' && c <= '9' && _entry.Length < requiredCode.Length) _entry += c;
+            else if (c == '\n' || c == '\r') { PlayClick(); Submit(); }
+            else if (c >= '0' && c <= '9' && _entry.Length < requiredCode.Length) { _entry += c; PlayClick(); }
         }
     }
 
@@ -107,18 +126,20 @@ public class Keypad : MonoBehaviour
                 var rect = new Rect(startX + col * (btnSize + btnGap), startY + row * (btnSize + btnGap), btnSize, btnSize);
                 if (GUI.Button(rect, num.ToString(), btnStyle))
                 {
+                    PlayClick();
                     if (_entry.Length < requiredCode.Length) _entry += num.ToString();
                 }
             }
         }
 
         float row4Y = startY + 3 * (btnSize + btnGap);
-        if (GUI.Button(new Rect(startX, row4Y, btnSize, btnSize), "C", btnStyle)) _entry = "";
+        if (GUI.Button(new Rect(startX, row4Y, btnSize, btnSize), "C", btnStyle)) { PlayClick(); _entry = ""; }
         if (GUI.Button(new Rect(startX + (btnSize + btnGap), row4Y, btnSize, btnSize), "0", btnStyle))
         {
+            PlayClick();
             if (_entry.Length < requiredCode.Length) _entry += "0";
         }
-        if (GUI.Button(new Rect(startX + 2 * (btnSize + btnGap), row4Y, btnSize, btnSize), "OK", btnStyle)) Submit();
+        if (GUI.Button(new Rect(startX + 2 * (btnSize + btnGap), row4Y, btnSize, btnSize), "OK", btnStyle)) { PlayClick(); Submit(); }
 
         if (Time.unscaledTime < _flashUntil)
         {
