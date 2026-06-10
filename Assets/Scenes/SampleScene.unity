@@ -95851,7 +95851,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Readable
   title: Somebody's Note
-  fullText: 
+  fullText: 'Green, blue, red
+
+    This is the destiny...'
   charsPerPage: 300
 --- !u!1 &2072729051
 GameObject:
