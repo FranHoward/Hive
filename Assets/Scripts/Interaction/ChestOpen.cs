@@ -19,12 +19,18 @@ public class ChestOpen : MonoBehaviour
         if (key != null)
         {
             key.SetActive(true);
-            Rigidbody rb = key.GetComponentInChildren<Rigidbody>();
+            Rigidbody rb = key.GetComponent<Rigidbody>();
             if (rb != null)
             {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
                 rb.isKinematic = false;
-                rb.useGravity = true;
+                rb.useGravity = false;
             }
+
+            FloatHover hover = key.GetComponent<FloatHover>();
+            if (hover != null)
+                hover.enabled = true;
         }
     }
 }

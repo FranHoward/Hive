@@ -167,6 +167,11 @@ public class ObjectPickup : MonoBehaviour
                     _originalUseGravity = _heldRb.useGravity;
                     _originalCollisionMode = _heldRb.collisionDetectionMode;
 
+                    // A pickup may rest kinematic so it sits exactly where placed
+                    // (e.g. inside a chest) without physics ejecting it. Switch it
+                    // to a dynamic body so the hold spring and gravity work once held.
+                    _heldRb.isKinematic = false;
+
                     _heldRb.linearVelocity = Vector3.zero;
                     _heldRb.angularVelocity = Vector3.zero;
                     _heldRb.useGravity = false;
