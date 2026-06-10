@@ -39919,6 +39919,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03775643cbac8f344b098090eb1ba8a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WinTrigger
+  startScene: StartScene
 --- !u!65 &610871449
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -95851,7 +95852,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Readable
   title: Somebody's Note
-  fullText: 
+  fullText: 'Green, blue, red
+
+    This is the destiny...'
   charsPerPage: 300
 --- !u!1 &2072729051
 GameObject:

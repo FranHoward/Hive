@@ -32,9 +32,15 @@ public class WinTrigger : MonoBehaviour
     float _staticTimer = 0f;
     bool _showStatic = false;
 
+    [SerializeField] private string startScene = "StartScene";
+
     void OnTriggerEnter(Collider other)
     {
         if (_won) return;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (other.GetComponentInParent<PlayerMovement>() != null)
         {
             _won = true;
@@ -232,7 +238,7 @@ public class WinTrigger : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
         if (GUI.Button(new Rect(bx + bw + gap, by, bw, bh), "✕   Quit", btnStyle))
-            Application.Quit();
+            SceneManager.LoadScene(startScene);
 
         // 底部小字
         var hintStyle = new GUIStyle(GUI.skin.label)
