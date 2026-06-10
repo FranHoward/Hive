@@ -48,7 +48,6 @@ namespace HorrorDecorTools
             BuildPillars(false);
             BuildEggSacs(false);
             BuildWebbing(false);
-            SetContrastLightingBaseline(false);
             BuildLights(false);
             BuildSpores(false);
             BuildGroundHaze(false);
@@ -77,7 +76,6 @@ namespace HorrorDecorTools
         public static void BuildHorrorEffectsMenu()
         {
             if (!GuardScene()) return;
-            SetContrastLightingBaseline(true);
             BuildLights(true);
             BuildSpores(true);
             BuildGroundHaze(true);
@@ -719,7 +717,7 @@ namespace HorrorDecorTools
 
             SetVolumeComponent(profile, out ColorAdjustments color);
             color.active = true;
-            color.postExposure.Override(-0.45f);
+            color.postExposure.Override(0f);
             color.contrast.Override(32f);
             color.saturation.Override(-34f);
             color.colorFilter.Override(new Color(0.68f, 0.82f, 0.66f));

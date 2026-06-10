@@ -291,11 +291,13 @@ public class ObjectPickup : MonoBehaviour
         }
     }
 
+    const string GlowLightName = "__PickupGlow";
+
     void ApplyGlow(GameObject obj)
     {
-        // Point light
-        Light light = obj.GetComponent<Light>();
-        if (light == null) light = obj.AddComponent<Light>();
+        // Use a dedicated child light so we never overwrite a functional Light
+        // the object already owns (e.g. the flashlight's own beam).
+        Light light = GetOrCreateGlowLight(obj);
         light.type = LightType.Point;
         light.color = new Color(1f, 0.7f, 0f);
         light.intensity = 3f;
@@ -311,11 +313,25 @@ public class ObjectPickup : MonoBehaviour
         }
     }
 
+    Light GetOrCreateGlowLight(GameObject obj)
+    {
+        Transform existing = obj.transform.Find(GlowLightName);
+        if (existing != null) return existing.GetComponent<Light>();
+
+        var go = new GameObject(GlowLightName);
+        go.transform.SetParent(obj.transform, false);
+        return go.AddComponent<Light>();
+    }
+
     void RemoveGlow(GameObject obj)
     {
-        // Point light
-        Light light = obj.GetComponent<Light>();
-        if (light != null) light.enabled = false;
+        // Point light (the dedicated glow child only; leaves the object's own Light alone)
+        Transform existing = obj.transform.Find(GlowLightName);
+        if (existing != null)
+        {
+            Light light = existing.GetComponent<Light>();
+            if (light != null) light.enabled = false;
+        }
 
         // Emission
         Renderer rend = obj.GetComponentInChildren<Renderer>();
