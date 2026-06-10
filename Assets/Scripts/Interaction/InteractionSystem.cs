@@ -79,7 +79,7 @@ public class InteractionSystem : MonoBehaviour
 
         Ray ray = cam.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
 
-        if (Physics.Raycast(ray, out RaycastHit hit, interactRange))
+        if (TryGetInteractionHit(ray, out RaycastHit hit))
         {
             if (hit.collider.CompareTag("Interactable"))
             {
@@ -94,6 +94,27 @@ public class InteractionSystem : MonoBehaviour
             lookingAtBlockSlot = hit.collider.GetComponentInParent<BlockSlot>();
             lookingAtSecretTrigger = hit.collider.GetComponentInParent<SecretTrigger>();
         }
+    }
+
+    bool TryGetInteractionHit(Ray ray, out RaycastHit bestHit)
+    {
+        bestHit = default;
+        bool found = false;
+        GameObject heldObject = pickup != null ? pickup.HeldObject : null;
+
+        foreach (RaycastHit hit in Physics.RaycastAll(ray, interactRange))
+        {
+            if (heldObject != null && hit.collider.transform.IsChildOf(heldObject.transform))
+                continue;
+
+            if (!found || hit.distance < bestHit.distance)
+            {
+                bestHit = hit;
+                found = true;
+            }
+        }
+
+        return found;
     }
 
     Key GetHeldKey()

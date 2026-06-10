@@ -74794,6 +74794,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChestOpen
   key: {fileID: 1150875696}
+  keyRevealDelay: 2
 --- !u!1 &1456100759
 GameObject:
   m_ObjectHideFlags: 0
@@ -103735,6 +103736,7 @@ GameObject:
   - component: {fileID: 4000000015}
   - component: {fileID: 4000000019}
   - component: {fileID: 5000000001}
+  - component: {fileID: 4000000020}
   - component: {fileID: 9000000009}
   m_Layer: 0
   m_Name: Locked_Chest
@@ -103856,6 +103858,27 @@ MonoBehaviour:
   openAngle: 90
   duration: 0.7
   openVolume: 1
+--- !u!65 &4000000020
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4000000014}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5, y: 1.1, z: 1.1}
+  m_Center: {x: 0.2, y: 0.55, z: 0}
 --- !u!1 &6000000001
 GameObject:
   m_ObjectHideFlags: 0
