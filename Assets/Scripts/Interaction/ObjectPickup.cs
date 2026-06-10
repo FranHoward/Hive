@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class ObjectPickup : MonoBehaviour
@@ -145,46 +146,43 @@ public class ObjectPickup : MonoBehaviour
         if (!Input.GetMouseButtonDown(0)) return;
 
         Ray ray = _cam.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
-        if (Physics.Raycast(ray, out RaycastHit hit, pickupRange))
+        if (TryGetPickupHit(ray, out RaycastHit hit, out GameObject pickupObject))
         {
-            if (hit.collider.CompareTag("Pickupable"))
+            RemoveGlow(pickupObject);
+            _highlightedObject = null;
+
+            if (_pickupClip != null)
+                AudioSource.PlayClipAtPoint(_pickupClip, hit.point, pickupVolume);
+
+            _heldObject = pickupObject;
+            _heldRb = _heldObject.GetComponent<Rigidbody>();
+            _userRotation = Quaternion.identity;
+
+            if (_heldRb != null)
             {
-                RemoveGlow(hit.collider.gameObject);
-                _highlightedObject = null;
+                _originalConstraints = _heldRb.constraints;
+                _originalDrag = _heldRb.linearDamping;
+                _originalAngularDrag = _heldRb.angularDamping;
+                _originalUseGravity = _heldRb.useGravity;
+                _originalCollisionMode = _heldRb.collisionDetectionMode;
 
-                if (_pickupClip != null)
-                    AudioSource.PlayClipAtPoint(_pickupClip, hit.point, pickupVolume);
+                // A pickup may rest kinematic so it sits exactly where placed
+                // (e.g. inside a chest) without physics ejecting it. Switch it
+                // to a dynamic body so the hold spring and gravity work once held.
+                _heldRb.isKinematic = false;
 
-                _heldObject = hit.collider.gameObject;
-                _heldRb = _heldObject.GetComponent<Rigidbody>();
-                _userRotation = Quaternion.identity;
+                _heldRb.linearVelocity = Vector3.zero;
+                _heldRb.angularVelocity = Vector3.zero;
+                _heldRb.useGravity = false;
+                _heldRb.linearDamping = 1f;
+                _heldRb.angularDamping = 5f;
+                _heldRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            }
 
-                if (_heldRb != null)
-                {
-                    _originalConstraints = _heldRb.constraints;
-                    _originalDrag = _heldRb.linearDamping;
-                    _originalAngularDrag = _heldRb.angularDamping;
-                    _originalUseGravity = _heldRb.useGravity;
-                    _originalCollisionMode = _heldRb.collisionDetectionMode;
-
-                    // A pickup may rest kinematic so it sits exactly where placed
-                    // (e.g. inside a chest) without physics ejecting it. Switch it
-                    // to a dynamic body so the hold spring and gravity work once held.
-                    _heldRb.isKinematic = false;
-
-                    _heldRb.linearVelocity = Vector3.zero;
-                    _heldRb.angularVelocity = Vector3.zero;
-                    _heldRb.useGravity = false;
-                    _heldRb.linearDamping = 1f;
-                    _heldRb.angularDamping = 5f;
-                    _heldRb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-                }
-
-                if (_playerCollider != null)
-                {
-                    foreach (Collider col in _heldObject.GetComponentsInChildren<Collider>())
-                        Physics.IgnoreCollision(col, _playerCollider, true);
-                }
+            if (_playerCollider != null)
+            {
+                foreach (Collider col in _heldObject.GetComponentsInChildren<Collider>())
+                    Physics.IgnoreCollision(col, _playerCollider, true);
             }
         }
     }
@@ -281,11 +279,8 @@ public class ObjectPickup : MonoBehaviour
         GameObject lookedAt = null;
 
         Ray ray = _cam.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f));
-        if (Physics.Raycast(ray, out RaycastHit hit, pickupRange))
-        {
-            if (hit.collider.CompareTag("Pickupable"))
-                lookedAt = hit.collider.gameObject;
-        }
+        if (TryGetPickupHit(ray, out _, out GameObject pickupObject))
+            lookedAt = pickupObject;
 
         // If we're looking at something new, highlight it
         if (lookedAt != _highlightedObject)
@@ -308,7 +303,7 @@ public class ObjectPickup : MonoBehaviour
         light.enabled = true;
 
         // Emission
-        Renderer rend = obj.GetComponent<Renderer>();
+        Renderer rend = obj.GetComponentInChildren<Renderer>();
         if (rend != null)
         {
             rend.material.EnableKeyword("_EMISSION");
@@ -323,11 +318,59 @@ public class ObjectPickup : MonoBehaviour
         if (light != null) light.enabled = false;
 
         // Emission
-        Renderer rend = obj.GetComponent<Renderer>();
+        Renderer rend = obj.GetComponentInChildren<Renderer>();
         if (rend != null)
         {
             rend.material.SetColor("_EmissionColor", Color.black);
             rend.material.DisableKeyword("_EMISSION");
         }
+    }
+
+    bool TryGetPickupHit(Ray ray, out RaycastHit pickupHit, out GameObject pickupObject)
+    {
+        pickupHit = default;
+        pickupObject = null;
+
+        RaycastHit[] hits = Physics.RaycastAll(ray, pickupRange, ~0, QueryTriggerInteraction.Ignore);
+        Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (RaycastHit hit in hits)
+        {
+            GameObject pickupRoot = GetPickupRoot(hit.collider);
+            if (pickupRoot != null)
+            {
+                pickupHit = hit;
+                pickupObject = pickupRoot;
+                return true;
+            }
+
+            if (IsOpenChestCollider(hit.collider))
+                continue;
+
+            // A real collider in front blocks pickup, but interaction triggers do not.
+            return false;
+        }
+
+        return false;
+    }
+
+    GameObject GetPickupRoot(Collider collider)
+    {
+        Transform current = collider.transform;
+        while (current != null)
+        {
+            if (current.CompareTag("Pickupable"))
+                return current.gameObject;
+
+            current = current.parent;
+        }
+
+        return null;
+    }
+
+    bool IsOpenChestCollider(Collider collider)
+    {
+        ChestAnimation chest = collider.GetComponentInParent<ChestAnimation>();
+        return chest != null && chest.IsOpen;
     }
 }
