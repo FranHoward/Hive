@@ -19715,7 +19715,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -58819,6 +58819,7 @@ GameObject:
   m_Component:
   - component: {fileID: 904787625}
   - component: {fileID: 904787626}
+  - component: {fileID: 904787627}
   m_Layer: 0
   m_Name: HiveHorrorVolume
   m_TagString: Untagged
@@ -58858,6 +58859,23 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 599b44e244eac4b53b1a212e0d1d5b1a, type: 2}
+--- !u!114 &904787627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904787624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8df3d4760a76461aa34df88764e6a1b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  horrorProfile: {fileID: 11400000, guid: 599b44e244eac4b53b1a212e0d1d5b1a, type: 2}
+  volumeName: HiveHorrorVolume
+  applyToAllCameras: 1
+  priority: 25
+  weight: 1
 --- !u!1 &920193064
 GameObject:
   m_ObjectHideFlags: 0

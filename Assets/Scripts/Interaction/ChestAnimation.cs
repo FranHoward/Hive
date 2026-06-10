@@ -13,6 +13,7 @@ public class ChestAnimation : MonoBehaviour
     AudioClip _openClip;
 
     bool _opened;
+    public bool IsOpen => _opened;
 
     void Awake()
     {
